@@ -78,8 +78,8 @@ if option == "menu":
 
 CSS = 0
 if "90primeone" in option:
-    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_90prime_one.ini")
-    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90PrimeOne_master.txt")
+    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_server_90prime_one.ini")
+    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90primeone_master.txt")
     timingfile = os.path.join(
         azcam.db.datafolder,
         "dspcode",
@@ -90,8 +90,10 @@ if "90primeone" in option:
     azcam.db.servermode = "90primeone"
     cmdport = 2432
 elif "normal" in option:
-    parfile = os.path.join(azcam.db.datafolder, "parameters_90prime_normal.ini")
-    template = os.path.join(azcam.db.datafolder, "templates", "FitsTemplate_90Prime_master.txt")
+    parfile = os.path.join(
+        azcam.db.datafolder, "parameters", "parameters_server_90prime_normal.ini"
+    )
+    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90prime_master.txt")
     timingfile = os.path.join(
         azcam.db.datafolder,
         "dspcode",
@@ -102,8 +104,8 @@ elif "normal" in option:
     azcam.db.servermode = "normal"
     cmdport = 2402
 elif "fast" in option:
-    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_90prime_fast.ini")
-    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90Prime_master.txt")
+    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_server_90prime_fast.ini")
+    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90prime_master.txt")
     timingfile = os.path.join(
         azcam.db.datafolder,
         "dspcode",
@@ -115,8 +117,10 @@ elif "fast" in option:
     azcam.db.servermode = "fast"
     cmdport = 2402
 elif "overscan" in option:
-    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_90prime_overscan.ini")
-    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90Prime_master.txt")
+    parfile = os.path.join(
+        azcam.db.datafolder, "parameters", "parameters_server_90prime_overscan.ini"
+    )
+    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90prime_master.txt")
     timingfile = os.path.join(
         azcam.db.datafolder,
         "dspcode",
@@ -129,8 +133,8 @@ elif "overscan" in option:
 elif "css" in option:
     print("90Prime for CSS")
     CSS = 1
-    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_90prime_css.ini")
-    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90Prime_css.txt")
+    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_server_90prime_css.ini")
+    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90prime_css.txt")
     timingfile = os.path.join(
         azcam.db.systemfolder,
         "dspcode",
@@ -227,11 +231,11 @@ system.set_keyword("DEWAR", "90prime", "Dewar name")
 # detector
 # ****************************************************************
 if "90primeone" in option:
-    from azcam_bok.primefocus.detector_bok90prime import detector_bok90prime_one
+    from azcam_90prime.detector_bok90prime import detector_bok90prime_one
 
     exposure.set_detpars(detector_bok90prime_one)
 else:
-    from azcam_bok.primefocus.detector_bok90prime import detector_bok90prime
+    from azcam_90prime.detector_bok90prime import detector_bok90prime
 
     if "overscan" in option:
         detector_bok90prime["format"] = [4032 * 2, 6, 0, 20, 4096 * 2, 0, 0, 20, 0]
@@ -246,7 +250,7 @@ display = Ds9Display()
 # system-specific
 # ****************************************************************
 if CSS:
-    from azcam_bok.primefocus.css import CSS
+    from azcam_90prime.css import CSS
 
     css = CSS()
     azcam.db.tools["css"] = css

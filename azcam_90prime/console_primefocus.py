@@ -40,7 +40,7 @@ else:
 azcam.db.datafolder = azcam.utils.fix_path(azcam.db.datafolder)
 
 parfile = os.path.join(
-    azcam.db.datafolder, f"parameters_{azcam.db.systemname}_console.ini"
+    azcam.db.datafolder, "parameters", f"parameters_console_{azcam.db.systemname}.ini"
 )
 
 # ****************************************************************
