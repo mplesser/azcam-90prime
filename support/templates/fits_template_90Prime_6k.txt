@@ -1,0 +1,13 @@
+OBSERVER Unknown / observer name
+OPERATOR Unknown / operator name
+DETNAME 90prime6k / detector name
+PIXSIZE1 15.0 / Pixel size for axis 1 (microns)
+PIXSIZE2 15.0 / Pixel size for axis 2 (microns)
+INSTRUME 90prime / Instrument name
+PIXSCAL1 0.455 / Pixel scale for axis 1 (arcsec/pixel)
+PIXSCAL2 0.455 / Pixel scale for axis 2 (arcsec/pixel)
+TELESCOP Steward 2.3 m (bok)	/ Telescope name
+SITELAT  31:58.8 / Latitude (degrees N)
+SITELONG 111:36.0 / Longitude (degrees W)
+SITEELEV 2120 / Altitude (meters)
+TIMEZONE 7 / local time zone
