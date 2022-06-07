@@ -8,8 +8,14 @@ import azcam.server
 import azcam.shortcuts
 from azcam.tools.cmdserver import CommandServer
 from azcam.tools.system import System
+
 from azcam_arc.controller_arc import ControllerArc
 from azcam_arc.exposure_arc import ExposureArc
+
+from azcam_archon.controller_archon import ControllerArchon
+from azcam_archon.exposure_archon import ExposureArchon
+from azcam_archon.tempcon_archon import TempConArchon
+
 from azcam_cryocon.tempcon_cryocon24 import TempConCryoCon24
 from azcam_ds9.ds9display import Ds9Display
 from azcam_imageserver.sendimage import SendImage
@@ -65,18 +71,20 @@ azcam.db.datafolder = azcam.utils.fix_path(azcam.db.datafolder)
 # ****************************************************************
 # configuration menu
 # ****************************************************************
-print("90prime Startup Menu\n")
+print("90Prime Startup Menu\n")
 menu_options = {
     "90prime (standard mode)": "normal",
     "90primeOne": "90primeone",
     "90prime with overscan rows": "overscan",
     "90prime FAST mode (with overscan rows)": "fast",
     "CSS mode": "css",
+    "6k mode": "6k",
 }
 if option == "menu":
     option = azcam.utils.show_menu(menu_options)
 
 CSS = 0
+ARCHON = 0
 if "90primeone" in option:
     parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_server_90prime_one.ini")
     template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90primeone_master.txt")
@@ -131,7 +139,6 @@ elif "overscan" in option:
     azcam.db.servermode = "overscan"
     cmdport = 2402
 elif "css" in option:
-    print("90Prime for CSS")
     CSS = 1
     parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_server_90prime_css.ini")
     template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90prime_css.txt")
@@ -144,6 +151,19 @@ elif "css" in option:
     )
     azcam.db.servermode = "CSS"
     cmdport = 2422
+elif "6k" in option:
+    print("90Prime for 6k CCD")
+    ARCHON = 1
+    parfile = os.path.join(azcam.db.datafolder, "parameters", "parameters_server_90prime_6k.ini")
+    template = os.path.join(azcam.db.datafolder, "templates", "fits_template_90prime_6k.txt")
+    timingfile = os.path.join(
+        azcam.db.datafolder,
+        "dspcode",
+        "archon_6k",
+        "90prime6k.acf",
+    )
+    azcam.db.servermode = "6k"
+    cmdport = 2442
 else:
     raise azcam.AzcamError("bad server configuration")
 parfile = parfile
@@ -158,46 +178,63 @@ azcam.log("Configuring for 90prime")
 # ****************************************************************
 # controller
 # ****************************************************************
-controller = ControllerArc()
-controller.timing_board = "arc22"
-controller.clock_boards = ["arc32"]
-controller.video_boards = ["arc47", "arc47", "arc47", "arc47"]
-controller.set_boards()
-controller.video_gain = 1
-controller.video_speed = 1
-controller.camserver.set_server("localhost", 2405)
-controller.pci_file = os.path.join(
-    azcam.db.systemfolder, "dspcode", "dspcode_90prime", "dsppci", "pci3.lod"
-)
-controller.timing_file = timingfile
+if ARCHON:
+    controller = ControllerArchon()
+    controller.timing_file = timingfile
+    controller.camserver.port = 4242
+    controller.camserver.host = "10.0.0.2"
+else:
+    controller = ControllerArc()
+    controller.timing_board = "arc22"
+    controller.clock_boards = ["arc32"]
+    controller.video_boards = ["arc47", "arc47", "arc47", "arc47"]
+    controller.set_boards()
+    controller.video_gain = 1
+    controller.video_speed = 1
+    controller.camserver.set_server("localhost", 2405)
+    controller.pci_file = os.path.join(
+        azcam.db.systemfolder, "dspcode", "dspcode_90prime", "dsppci", "pci3.lod"
+    )
+    controller.timing_file = timingfile
 
 # ****************************************************************
 # temperature controller
 # ****************************************************************
-tempcon = TempConCryoCon24(description="90prime CryoCon")
-tempcon.control_temperature = -135.0
-# tempcon.host = "10.0.0.45"
-tempcon.host = "10.30.3.32"
-tempcon.init_commands = [
-    "input A:units C",
-    "input B:units C",
-    "input C:units C",
-    "input A:isenix 2",
-    "input B:isenix 2",
-    "loop 1:type pid",
-    "loop 1:range mid",
-    "loop 1:maxpwr 100",
-]
+if ARCHON:
+    tempcon = TempConArchon(description="90prime Archon")
+else:
+    tempcon = TempConCryoCon24(description="90prime CryoCon")
+    tempcon.control_temperature = -135.0
+    # tempcon.host = "10.0.0.45"
+    tempcon.host = "10.30.3.32"
+    tempcon.init_commands = [
+        "input A:units C",
+        "input B:units C",
+        "input C:units C",
+        "input A:isenix 2",
+        "input B:isenix 2",
+        "loop 1:type pid",
+        "loop 1:range mid",
+        "loop 1:maxpwr 100",
+    ]
 
 # ****************************************************************
 # exposure
 # ****************************************************************
-exposure = ExposureArc()
-exposure.filetype = exposure.filetypes["MEF"]
-exposure.image.filetype = exposure.filetypes["MEF"]
-exposure.update_headers_in_background = 1
-exposure.display_image = 0
-sendimage = SendImage()
+if ARCHON:
+    exposure = ExposureArchon()
+    exposure.filetype = exposure.filetypes["MEF"]
+    exposure.image.filetype = exposure.filetypes["MEF"]
+    # exposure.update_headers_in_background = 1
+    exposure.display_image = 0
+    sendimage = SendImage()
+else:
+    exposure = ExposureArc()
+    exposure.filetype = exposure.filetypes["MEF"]
+    exposure.image.filetype = exposure.filetypes["MEF"]
+    exposure.update_headers_in_background = 1
+    exposure.display_image = 0
+    sendimage = SendImage()
 if not lab:
     exposure.send_image = 1
     sendimage.set_remote_imageserver("10.30.1.2", 6543, "dataserver")
@@ -234,6 +271,12 @@ if "90primeone" in option:
     from azcam_90prime.detector_bok90prime import detector_bok90prime_one
 
     exposure.set_detpars(detector_bok90prime_one)
+elif "6k" in option:
+    from azcam_90prime.detector_bok90prime import detector_bok90prime_6k
+
+    exposure.set_detpars(detector_bok90prime_6k)
+    exposure.fileconverter.set_detector_config(detector_bok90prime_6k)
+
 else:
     from azcam_90prime.detector_bok90prime import detector_bok90prime
 
@@ -287,7 +330,10 @@ if 0:
 # ****************************************************************
 # camera server
 # ****************************************************************
-import azcam_90prime.restart_cameraserver
+if ARCHON:
+    pass
+else:
+    import azcam_90prime.restart_cameraserver
 
 # ****************************************************************
 # GUIs
