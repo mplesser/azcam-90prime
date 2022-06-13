@@ -100,10 +100,10 @@ detector_bok90prime_one = {
 detector_bok90prime_6k = {
     "name": "bok90prime_6k",
     "description": "6k CCD",
-    "ref_pixel": [3072.0, 3072.0],
-    "format": [6144, 0, 0, 0, 6144, 0, 0, 0, 0],
+    "ref_pixel": [3060.0, 3060.0],
+    "format": [6120, 0, 0, 20, 6120, 0, 0, 0, 0],
     "focalplane": [1, 1, 2, 2, "0123"],
-    "roi": [1, 6144, 1, 6144, 1, 1],
+    "roi": [1, 6120, 1, 6120, 1, 1],
     "ext_position": [[1, 1], [2, 1], [1, 2], [2, 2]],
     "jpg_order": [1, 2, 3, 4],
     "amp_cfg": [0, 1, 2, 3],
@@ -129,9 +129,9 @@ detector_bok90prime_6k = {
     ],
     "amp_pixel_position": [
         [1, 1],
-        [6144, 1],
-        [1, 6144],
-        [6144, 1],
+        [6120, 1],
+        [1, 6120],
+        [6120, 1],
     ],
     "ext_name": [
         "im1",
