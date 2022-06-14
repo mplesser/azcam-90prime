@@ -230,6 +230,7 @@ if ARCHON:
     # exposure.update_headers_in_background = 1
     exposure.display_image = 0
     sendimage = SendImage()
+    exposure.add_extensions = 1
 else:
     exposure = ExposureArc()
     exposure.filetype = exposure.filetypes["MEF"]
