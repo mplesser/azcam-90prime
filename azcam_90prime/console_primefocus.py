@@ -80,7 +80,7 @@ focus.focus_type = "step"
 # ****************************************************************
 # try to connect to azcamserver
 # ****************************************************************
-ports = [2402, 2412, 2422, 2432]
+ports = [2402, 2412, 2422, 2432, 2442]
 connected = 0
 server = azcam.db.tools["server"]
 for port in ports:
