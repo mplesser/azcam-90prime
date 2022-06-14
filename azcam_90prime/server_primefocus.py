@@ -182,7 +182,9 @@ if ARCHON:
     controller = ControllerArchon()
     controller.timing_file = timingfile
     controller.camserver.port = 4242
-    controller.camserver.host = "10.0.0.2"
+    controller.camserver.host = "10.30.3.6"  # archon at Bok
+    controller.reset_flag = 1  # 0 for soft reset, 1 to upload code
+    controller.verbosity = 2
 else:
     controller = ControllerArc()
     controller.timing_board = "arc22"
