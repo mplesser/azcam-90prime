@@ -3,6 +3,7 @@ rich
 
 -e ./azcam
 -e ./azcam-arc
+-e ./azcam-archon
 -e ./azcam-cryocon
 -e ./azcam-ds9
 -e ./azcam-expstatus
