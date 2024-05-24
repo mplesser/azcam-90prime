@@ -10,11 +10,11 @@ import threading
 
 import azcam
 import azcam.utils
-import azcam.console.console
-import azcam.console.shortcuts
-import azcam.console.tools.console_tools
-from azcam.console.tools.ds9display import Ds9Display
-from azcam.console.tools.focus import FocusConsole
+import azcam_console.console
+import azcam_console.shortcuts
+import azcam_console.tools.console_tools
+from azcam.tools.ds9display import Ds9Display
+from azcam_console.tools.focus import FocusConsole
 
 
 def setup():
@@ -49,13 +49,13 @@ def setup():
     dthread.start()  # thread just for speed
 
     # console tools
-    from azcam.console.tools import create_console_tools
+    from azcam_console.tools import create_console_tools
 
     create_console_tools()
 
     # observe
     azcam.log("Loading observe")
-    from azcam.observe.observe_cli.observe_cli import ObserveCli
+    from azcam_console.observe.observe_cli.observe_cli import ObserveCli
 
     observe = ObserveCli()
     observe.move_telescope_during_readout = 1
@@ -86,4 +86,4 @@ def setup():
 
 # start
 setup()
-from azcam.cli import *
+from azcam_console.cli import *

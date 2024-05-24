@@ -10,16 +10,16 @@ import sys
 import azcam
 import azcam.utils
 import azcam.exceptions
-import azcam.server.server
-import azcam.server.shortcuts
-from azcam.server.cmdserver import CommandServer
+import azcam.server
+import azcam.shortcuts
+from azcam.cmdserver import CommandServer
 from azcam.header import System
-from azcam.server.tools.ds9display import Ds9Display
-from azcam.server.tools.focus import Focus
+from azcam.tools.ds9display import Ds9Display
+from azcam.tools.focus import Focus
 
-from azcam.server.webtools.webserver.fastapi_server import WebServer
-from azcam.server.webtools.status.status import Status
-from azcam.server.webtools.exptool.exptool import Exptool
+from azcam.webtools.webserver.fastapi_server import WebServer
+from azcam.webtools.status.status import Status
+from azcam.webtools.exptool.exptool import Exptool
 
 from azcam_90prime.telescope_bok import BokTCS
 
@@ -206,8 +206,8 @@ def setup():
 
     # controller
     if ARCHON:
-        from azcam.server.tools.archon.controller_archon import ControllerArchon
-        from azcam.server.tools.archon.exposure_archon import ExposureArchon
+        from azcam.tools.archon.controller_archon import ControllerArchon
+        from azcam.tools.archon.exposure_archon import ExposureArchon
 
         controller = ControllerArchon()
         controller.timing_file = timingfile
@@ -217,8 +217,8 @@ def setup():
         controller.verbosity = 2
 
     else:
-        from azcam.server.tools.arc.controller_arc import ControllerArc
-        from azcam.server.tools.arc.exposure_arc import ExposureArc
+        from azcam.tools.arc.controller_arc import ControllerArc
+        from azcam.tools.arc.exposure_arc import ExposureArc
 
         controller = ControllerArc()
         controller.timing_board = "arc22"
@@ -235,7 +235,7 @@ def setup():
 
     # temperature controller
     if ARCHON:
-        from azcam.server.tools.archon.tempcon_archon import TempConArchon
+        from azcam.tools.archon.tempcon_archon import TempConArchon
 
         tempcon = TempConArchon(description="90prime Archon")
         tempcon.temperature_ids = [0, 2]  # camtemp, dewtemp
@@ -244,7 +244,7 @@ def setup():
         controller.heater_board_installed = 1
 
     else:
-        from azcam.server.tools.tempcon_cryocon24 import TempConCryoCon24
+        from azcam.tools.tempcon_cryocon24 import TempConCryoCon24
 
         tempcon = TempConCryoCon24(description="90prime CryoCon")
         tempcon.control_temperature = -135.0
